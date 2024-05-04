@@ -7,7 +7,7 @@ The project was created to find out how many keys I press over a certain period 
 In order for the program to read your keystrokes, you need to run it. You can minimize the program and continue working. The program interface has a statistics section where you can view information on the collected data and sort them by time period, 
 as well as by type of keys. In the help section, you can find answers to your questions.
 
-# LICENCE
+# LICENSE
 MIT License
 
 Copyright (c) 2024 DriedApricot
