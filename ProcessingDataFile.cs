@@ -116,19 +116,25 @@ namespace CountClickKey
                         // Week stats
                         DateTime dateTime = DateTime.Now;
 
+                        data.DataCountClicked.DataWeekClicked.DayOfWeek = (int)dateTime.DayOfWeek;
+
                         DateTime dateLastMonday;
-                        if(dateTime.DayOfWeek == DayOfWeek.Sunday)
-                            dateLastMonday = dateTime.AddDays(-((int)dateTime.DayOfWeek+6));
+                        if (dateTime.DayOfWeek == DayOfWeek.Sunday)
+                            dateLastMonday = dateTime.AddDays(-((int)dateTime.DayOfWeek + 6));
                         else
-                            dateLastMonday = dateTime.AddDays(-(int)dateTime.DayOfWeek+1);
+                            dateLastMonday = dateTime.AddDays(-(int)dateTime.DayOfWeek + 1);
+
+                        dateLastMonday = dateLastMonday.AddHours(-dateTime.Hour);
+                        dateLastMonday = dateLastMonday.AddMinutes(-dateTime.Minute);
+                        dateLastMonday = dateLastMonday.AddSeconds(-dateTime.Second);
 
                         var weekDayUpdateFile = data.DataCountClicked.DataWeekClicked.LastDayUpdate;
                         var weekMonthUpdateFile = data.DataCountClicked.DataWeekClicked.LastMonthUpdate;
                         var weekYearUpdateFile = data.DataCountClicked.DataWeekClicked.LastYearUpdate;
 
-                        data.DataCountClicked.DataWeekClicked.DayOfWeek = (int)dateTime.DayOfWeek;
+                        DateTime dateMondayUpdateFile = new DateTime(int.Parse(weekYearUpdateFile), int.Parse(weekMonthUpdateFile), int.Parse(weekDayUpdateFile));
 
-                        if(weekDayUpdateFile != dateLastMonday.ToString("dd") && weekMonthUpdateFile != dateLastMonday.ToString("MM") && weekYearUpdateFile != dateLastMonday.ToString("yyy"))
+                        if (dateLastMonday.Date != dateMondayUpdateFile.Date)
                         { 
                             data.DataCountClicked.DataWeekClicked.LastYearUpdate = dateLastMonday.ToString("yyy");
                             data.DataCountClicked.DataWeekClicked.LastMonthUpdate = dateLastMonday.ToString("MM");
