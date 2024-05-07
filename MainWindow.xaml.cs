@@ -399,7 +399,7 @@ namespace CountClickKey
 
     public class SettingApp
     {
-        public static readonly string VERSION_APP = "Version 1.0";
+        public static readonly string VERSION_APP = "Version 1.1";
 
         public static readonly string NAME_PAGE_MAIN = "Main";
         public static readonly string NAME_PAGE_STATS = "Stats";
