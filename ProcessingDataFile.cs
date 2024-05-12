@@ -105,8 +105,6 @@ namespace CountClickKey
                         DateTime dateUpdateFile = new DateTime(int.Parse(yearUpdateFile), int.Parse(monthUpdateFile), int.Parse(dayUpdateFile));
                         DateTime dateNow = DateTime.Today;
 
-                        //if (dayUpdateFile != DateTime.Today.ToString("dd") ||
-                        //    (dayUpdateFile == DateTime.Today.ToString("dd") && (monthUpdateFile != DateTime.Today.ToString("MM") || (monthUpdateFile == DateTime.Today.ToString("MM") && yearUpdateFile != DateTime.Today.ToString("yyy")))))
                         if(dateUpdateFile != dateNow)
                         {
                             data.DataCountClicked.DataDayClicked.YearNumber = DateTime.Today.ToString("yyy");
