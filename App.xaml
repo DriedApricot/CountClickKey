@@ -10,7 +10,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="NotifyIconResources.xaml"/>
-                <ResourceDictionary Source="Dictionary1.xaml"/>
+                <ResourceDictionary Source="Resources/lightTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

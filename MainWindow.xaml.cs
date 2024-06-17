@@ -5,6 +5,8 @@ using System.Windows.Media;
 using System.IO;
 using System.Threading;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System;
 
 namespace CountClickKey
 {
@@ -26,32 +28,48 @@ namespace CountClickKey
         {
             InitializeComponent();
 
-            textVersionApp.Text = SettingApp.VERSION_APP;
+            for (int i = 0; i < ComboBoxLanguageList.Items.Count; i++)
+            {
+                if (((ComboBoxItem)ComboBoxLanguageList.Items.GetItemAt(i)).Tag == Properties.Settings.Default.DefaultLanguage)
+                    ComboBoxLanguageList.SelectedIndex = i;
+            }
+
+            List<string> styleTheme = new List<string> { "Light", "Dark" };
+            ComboBoxThemeList.SelectionChanged += ThemeChange;
+            for(int i = 0; i < ComboBoxThemeList.Items.Count; i++)
+            {
+                if (((ComboBoxItem)ComboBoxThemeList.Items.GetItemAt(i)).Tag.ToString() == Properties.Settings.Default.DefaultTheme)
+                    ComboBoxThemeList.SelectedIndex = i;
+            }
+
             _openWindow = SettingApp.NAME_PAGE_MAIN;
 
             SELECT_TYPE_KEYS = SettingApp.TYPE_ALL_KEYS;
             SELECT_TYPE_PERIOD = SettingApp.TYPE_ALL_TIME_PERIOD;
 
-            if(DesignStatistics.AllKeyboard != null)
+            if(CountClickKey.Statistics.DesignStatistics.AllKeyboard != null)
             {
-                DesignStatistics.AllKeyboard.Clear();
-                DesignStatistics.AllKeyboard = null;
-                DesignStatistics.AllKeyboard = new ObservableCollection<StackPanel>();
+                CountClickKey.Statistics.DesignStatistics.AllKeyboard.Clear();
+                CountClickKey.Statistics.DesignStatistics.AllKeyboard = null;
+                CountClickKey.Statistics.DesignStatistics.AllKeyboard = new ObservableCollection<StackPanel>();
             }
+            DataContext = new MainViewModel();
+
+            OnSelectButtonWindow();
         }
 
         static MainWindow()
         {
-            DataFile dataFile = new DataFile();
+            CountClickKey.Statistics.DataFile dataFile = new CountClickKey.Statistics.DataFile();
             dataFile.CheckExistsFile();
 
-            StatisticsList statsList = new StatisticsList();
+            CountClickKey.Statistics.StatisticsList statsList = new CountClickKey.Statistics.StatisticsList();
             statsList.CreateStaticsList();
 
             // Start keylogger in another thread and close GUI
             Thread keyloggerThread = new Thread(() =>
             {
-                new Controller().StartMonitor();
+                new CountClickKey.Statistics.Controller().StartMonitor();
             });
             keyloggerThread.SetApartmentState(ApartmentState.STA);
             keyloggerThread.Start();
@@ -60,6 +78,24 @@ namespace CountClickKey
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+        }
+
+        private void ThemeChange(object sender, SelectionChangedEventArgs e)
+        {
+            string style = ((ComboBoxItem)ComboBoxThemeList.Items.GetItemAt(ComboBoxThemeList.SelectedIndex)).Tag.ToString();
+
+            if (style != null)
+            {
+                string themeFile = style.ToLower();
+
+                var uri = new Uri("Resources/" + themeFile + "Theme" + ".xaml", UriKind.Relative);
+                ResourceDictionary resourceDictionary = Application.LoadComponent(uri) as ResourceDictionary;
+                Application.Current.Resources.Clear();
+                Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
+
+                Properties.Settings.Default.DefaultTheme = style;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void ButtonCloseApp_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
@@ -80,9 +116,12 @@ namespace CountClickKey
 
                 StatsContentWindow.Visibility = Visibility.Collapsed;
                 SupportContentWindow.Visibility = Visibility.Collapsed;
+                SettingsContentWindow.Visibility = Visibility.Collapsed;
 
                 if (_isOpenBorderActionTool == true)
                     ChangeStatusActionTool();
+
+                DataContext = new MainViewModel();
             }
         }
         private void ButtonStats_Click(object sender, RoutedEventArgs e)
@@ -95,6 +134,7 @@ namespace CountClickKey
                 MainContentWindow.Visibility = Visibility.Collapsed;
                 borderVersionApp.Visibility = Visibility.Collapsed;
                 SupportContentWindow.Visibility = Visibility.Collapsed;
+                SettingsContentWindow.Visibility = Visibility.Collapsed;
 
                 StatsContentWindow.Visibility = Visibility;
 
@@ -107,6 +147,26 @@ namespace CountClickKey
                 ChangeColorTypeKeyStats();
             }
         }
+        private void ButtonSettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (_openWindow != SettingApp.NAME_PAGE_SETTINGS)
+            {
+                _openWindow = SettingApp.NAME_PAGE_SETTINGS;
+                OnSelectButtonWindow();
+
+                MainContentWindow.Visibility = Visibility.Collapsed;
+                StatsContentWindow.Visibility = Visibility.Collapsed;
+                SupportContentWindow.Visibility = Visibility.Collapsed;
+
+                SettingsContentWindow.Visibility = Visibility;
+                borderVersionApp.Visibility = Visibility;
+
+                if (_isOpenBorderActionTool == true)
+                    ChangeStatusActionTool();
+
+                DataContext = new MainViewModel();
+            }
+        }
         private void ButtonSupport_Click(object sender, RoutedEventArgs e)
         {
             if (_openWindow != SettingApp.NAME_PAGE_SUPPORT)
@@ -116,12 +176,15 @@ namespace CountClickKey
 
                 MainContentWindow.Visibility = Visibility.Collapsed;
                 StatsContentWindow.Visibility = Visibility.Collapsed;
+                SettingsContentWindow.Visibility = Visibility.Collapsed;
 
                 SupportContentWindow.Visibility = Visibility.Visible;
                 borderVersionApp.Visibility = Visibility;
 
                 if (_isOpenBorderActionTool == true)
                     ChangeStatusActionTool();
+
+                DataContext = new MainViewModel();
             }
         }
         private void ButtonArrowAsk_Click(object sender, RoutedEventArgs e)
@@ -138,15 +201,17 @@ namespace CountClickKey
                     {
                         buttonArrowAsk1.Style = styleOpenButtonArrowAsk;
                         borderSeparatorAsk1.Visibility = Visibility.Visible;
-                        textAnsverToAsk1.Visibility = Visibility.Visible;
-                        borderAsk1.Height = 190;
+                        textFirstAnswerToFirstAsk.Visibility = Visibility.Visible;
+                        textSecondAnswerToFirstAsk.Visibility = Visibility.Visible;
+                        textThirdAnswerToFirstAsk.Visibility = Visibility.Visible;
                     }
                     else if (buttonArrowAsk1.Style == styleOpenButtonArrowAsk)
                     {
                         buttonArrowAsk1.Style = styleCloseButtonArrowAsk;
                         borderSeparatorAsk1.Visibility = Visibility.Collapsed;
-                        textAnsverToAsk1.Visibility = Visibility.Collapsed;
-                        borderAsk1.Height = 49;
+                        textFirstAnswerToFirstAsk.Visibility = Visibility.Collapsed;
+                        textSecondAnswerToFirstAsk.Visibility = Visibility.Collapsed;
+                        textThirdAnswerToFirstAsk.Visibility = Visibility.Collapsed;
                     }
                     break;
                 case "buttonArrowAsk2":
@@ -154,15 +219,21 @@ namespace CountClickKey
                     {
                         buttonArrowAsk2.Style = styleOpenButtonArrowAsk;
                         borderSeparatorAsk2.Visibility = Visibility.Visible;
-                        textAnsverToAsk2.Visibility = Visibility.Visible;
-                        borderAsk2.Height = 385;
+                        textFirstAnswerToSecondAsk.Visibility = Visibility.Visible;
+                        textSecondAnswerToSecondAsk.Visibility = Visibility.Visible;
+                        textThirdAnswerToSecondAsk.Visibility = Visibility.Visible;
+                        textFourthAnswerToSecondAsk.Visibility = Visibility.Visible;
+                        textFifthAnswerToSecondAsk.Visibility = Visibility.Visible;
                     }
                     else if (buttonArrowAsk2.Style == styleOpenButtonArrowAsk)
                     {
                         buttonArrowAsk2.Style = styleCloseButtonArrowAsk;
                         borderSeparatorAsk2.Visibility = Visibility.Collapsed;
-                        textAnsverToAsk2.Visibility = Visibility.Collapsed;
-                        borderAsk2.Height = 49;
+                        textFirstAnswerToSecondAsk.Visibility = Visibility.Collapsed;
+                        textSecondAnswerToSecondAsk.Visibility = Visibility.Collapsed;
+                        textThirdAnswerToSecondAsk.Visibility = Visibility.Collapsed;
+                        textFourthAnswerToSecondAsk.Visibility = Visibility.Collapsed;
+                        textFifthAnswerToSecondAsk.Visibility = Visibility.Collapsed;
                     }
                     break;
             }
@@ -243,7 +314,7 @@ namespace CountClickKey
 
         private void ShowDesignStatistics()
         {
-            DesignStatistics designStats = new DesignStatistics();
+            CountClickKey.Statistics.DesignStatistics designStats = new CountClickKey.Statistics.DesignStatistics();
             designStats.RemoveDesighnStatistics();
 
             designStats.CreateDesignStatistics();
@@ -267,9 +338,37 @@ namespace CountClickKey
 
             ChangeStyleButtonStats();
 
+            ChangeStyleButtonSettings();
+
             ChangeStyleButtonSupport();
 
             OnSelectButtonWindow();
+        }
+        private void ChangeColorIconActionTool()
+        {
+            buttonHome.Focusable = false;
+            if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                buttonHomeText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#A09F9F"));
+            else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                buttonHomeText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#818080"));
+
+            buttonStats.Focusable = false;
+            if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#A09F9F"));
+            else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#818080"));
+
+            buttonSettings.Focusable = false;
+            if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                buttonSettingsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#A09F9F"));
+            else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                buttonSettingsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#818080"));
+
+            buttonSupport.Focusable = false;
+            if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#A09F9F"));
+            else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                buttonSupportText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#818080"));
         }
         private void OnSelectButtonWindow()
         {
@@ -278,28 +377,49 @@ namespace CountClickKey
             spHome.Style = notSelectStackPanel;
             spStats.Style = notSelectStackPanel;
             spSupport.Style = notSelectStackPanel;
+            spSettings.Style = notSelectStackPanel;
+
+            ChangeColorIconActionTool();
 
             if (_isOpenBorderActionTool == true)
             {
                 Style selectStackPanelStyle = this.FindResource("SelectStackPanel") as Style;
 
-                if(_openWindow == SettingApp.NAME_PAGE_MAIN)
+                if (_openWindow == SettingApp.NAME_PAGE_MAIN)
                 {
                     spHome.Style = selectStackPanelStyle;
-                    buttonHome.Focusable = false;
-                    buttonHomeText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    buttonHome.Focusable = true;
+                    if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                        buttonHomeText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                        buttonHomeText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#D0D0D0"));
                 }
                 else if (_openWindow == SettingApp.NAME_PAGE_STATS)
                 {
                     spStats.Style = selectStackPanelStyle;
-                    buttonStats.Focusable = false;
-                    buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    buttonStats.Focusable = true;
+                    if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                        buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                        buttonStatsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#D0D0D0"));
+                }
+                else if(_openWindow == SettingApp.NAME_PAGE_SETTINGS)
+                {
+                    spSettings.Style = selectStackPanelStyle;
+                    buttonSettings.Focusable = true;
+                    if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                        buttonSettingsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                        buttonSettingsText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#D0D0D0"));
                 }
                 else if (_openWindow == SettingApp.NAME_PAGE_SUPPORT)
                 {
                     spSupport.Style = selectStackPanelStyle;
-                    buttonSupport.Focusable = false;
-                    buttonSupport.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    buttonSupport.Focusable = true;
+                    if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Light")
+                        buttonSupportText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#B0B0B0"));
+                    else if (CountClickKey.Properties.Settings.Default.DefaultTheme.ToString() == "Dark")
+                        buttonSupportText.Foreground = (System.Windows.Media.Brush)(new BrushConverter().ConvertFrom("#D0D0D0"));
                 }
             }
         }
@@ -335,6 +455,23 @@ namespace CountClickKey
 
                 buttonStatsText.Visibility = Visibility.Hidden;
                 buttonStatsText.IsEnabled = false;
+            }
+        }
+        private void ChangeStyleButtonSettings()
+        {
+            if(_isOpenBorderActionTool == true)
+            {
+                buttonSettings.IsEnabled = false;
+
+                buttonSettingsText.Visibility = Visibility.Visible;
+                buttonSettingsText.IsEnabled = true;
+            }
+            else
+            {
+                buttonSettings.IsEnabled = true;
+
+                buttonSettingsText.Visibility = Visibility.Hidden;
+                buttonSettingsText.IsEnabled = false;
             }
         }
         private void ChangeStyleButtonSupport()
@@ -399,10 +536,9 @@ namespace CountClickKey
 
     public class SettingApp
     {
-        public static readonly string VERSION_APP = "Version 1.0";
-
         public static readonly string NAME_PAGE_MAIN = "Main";
         public static readonly string NAME_PAGE_STATS = "Stats";
+        public static readonly string NAME_PAGE_SETTINGS = "Settings";
         public static readonly string NAME_PAGE_SUPPORT = "Support";
 
         public static readonly string TYPE_ALL_KEYS = "All keys";

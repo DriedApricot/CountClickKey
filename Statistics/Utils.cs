@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     public static class Utils
     {

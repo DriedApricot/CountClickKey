@@ -31,7 +31,6 @@ G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\bin\Debug\Hardcodet.Wpf.Taskba
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\bin\Debug\Hardcodet.Wpf.TaskbarNotification.pdb
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\bin\Debug\Hardcodet.Wpf.TaskbarNotification.xml
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.csproj.AssemblyReference.cache
-G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\Dictionary1.baml
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\App.baml
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\MainWindow.g.cs
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\App.g.cs
@@ -40,10 +39,16 @@ G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey_Markup
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey_MarkupCompile.lref
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\MainWindow.baml
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\NotifyIconResources.baml
-G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.g.resources
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.Properties.Resources.resources
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.csproj.GenerateResource.cache
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.csproj.CoreCompileInputs.cache
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountCli.CF1DD5CC.Up2Date
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.exe
 G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.pdb
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.g.resources
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\bin\Debug\ru-RU\CountClickKey.resources.dll
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.Resources.lang.resources
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\CountClickKey.Resources.lang.ru-RU.resources
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\ru-RU\CountClickKey.resources.dll
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\Resources\lightTheme.baml
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Debug\Resources\darkTheme.baml

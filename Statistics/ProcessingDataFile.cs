@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using System.Windows;
 using System.Windows.Input;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     public class DataFile
     {
@@ -92,7 +92,7 @@ namespace CountClickKey
             {
                 foreach (var statsList in StatisticsList.StatisticsKeyboard)
                 {
-                    if (data.KeyID == statsList.KeyID)
+                    if (data.KeyID == statsList.KeyID && data.TypeKey == statsList.TypeKeys)
                     {
                         // All time stats
                         data.DataCountClicked.CountAllTimeClickedKey = statsList.DataCountClicked.CountAllTimeClickedKey;
@@ -183,6 +183,8 @@ namespace CountClickKey
                         }
                         else
                             data.DataCountClicked.DataYearClicked.CountYearClicked = statsList.DataCountClicked.DataYearClicked.CountYearClicked;
+
+                        break;
                     }
                 }
             }

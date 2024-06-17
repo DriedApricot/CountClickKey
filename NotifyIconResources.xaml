@@ -17,7 +17,7 @@
         x:Key="NotifyIcon"
         ContextMenu="{StaticResource SysTrayMenu}"
         LeftClickCommand="{Binding ShowWindowCommand}"
-        IconSource="/icon1.ico"
+        IconSource="/Resources/icon1.ico"
         ToolTipText="CountClickKey">
 
         <tb:TaskbarIcon.DataContext>
