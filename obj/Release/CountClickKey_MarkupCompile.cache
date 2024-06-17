@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-G:\scripting\C#\CountClickKey\CountClickKey\obj\Release\
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\obj\Release\
 CountClickKey
 none
 false
 TRACE
-G:\scripting\C#\CountClickKey\CountClickKey\App.xaml
-3769974807
+G:\scripting\C#\CountClickKeyGit\CountClickKeyHub\App.xaml
+4-2030153198
 
-12-1218869432
-16-1870780160
-Dictionary1.xaml;MainWindow.xaml;NotifyIconResources.xaml;
-
+23-1512175020
+161588371602
+MainWindow.xaml;NotifyIconResources.xaml;Resources\darkTheme.xaml;Resources\lightTheme.xaml;
+resources\splashscreen.png
 False
 

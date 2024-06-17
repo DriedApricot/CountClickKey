@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     public class StatisticsList
     {
@@ -34,7 +34,7 @@ namespace CountClickKey
             {
                 foreach (var statsList in StatisticsKeyboard)
                 {
-                    if(data.KeyID == statsList.KeyID)
+                    if(data.KeyID == statsList.KeyID && data.TypeKey == statsList.TypeKeys)
                     {
                         // All time stats
                         statsList.DataCountClicked.CountAllTimeClickedKey = data.DataCountClicked.CountAllTimeClickedKey;
@@ -61,6 +61,8 @@ namespace CountClickKey
                         // Year stats
                         statsList.DataCountClicked.DataYearClicked.CountYearClicked = data.DataCountClicked.DataYearClicked.CountYearClicked;
                         statsList.DataCountClicked.DataYearClicked.YearNumber = data.DataCountClicked.DataYearClicked.YearNumber;
+
+                        break;
                     }
                 }
             }

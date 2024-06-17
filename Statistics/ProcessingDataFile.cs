@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using System.Windows;
 using System.Windows.Input;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     public class DataFile
     {
@@ -92,7 +92,7 @@ namespace CountClickKey
             {
                 foreach (var statsList in StatisticsList.StatisticsKeyboard)
                 {
-                    if (data.KeyID == statsList.KeyID)
+                    if (data.KeyID == statsList.KeyID && data.TypeKey == statsList.TypeKeys)
                     {
                         // All time stats
                         data.DataCountClicked.CountAllTimeClickedKey = statsList.DataCountClicked.CountAllTimeClickedKey;
@@ -102,8 +102,10 @@ namespace CountClickKey
                         var monthUpdateFile = data.DataCountClicked.DataDayClicked.MonthNumber;
                         var yearUpdateFile = data.DataCountClicked.DataDayClicked.YearNumber;
 
-                        if (dayUpdateFile != DateTime.Today.ToString("dd") || 
-                            (dayUpdateFile == DateTime.Today.ToString("dd") && (monthUpdateFile != DateTime.Today.ToString("MM") || (monthUpdateFile == DateTime.Today.ToString("MM") && yearUpdateFile != DateTime.Today.ToString("yyy")))))
+                        DateTime dateUpdateFile = new DateTime(int.Parse(yearUpdateFile), int.Parse(monthUpdateFile), int.Parse(dayUpdateFile));
+                        DateTime dateNow = DateTime.Today;
+
+                        if(dateUpdateFile != dateNow)
                         {
                             data.DataCountClicked.DataDayClicked.YearNumber = DateTime.Today.ToString("yyy");
                             data.DataCountClicked.DataDayClicked.MonthNumber = DateTime.Today.ToString("MM");
@@ -115,14 +117,13 @@ namespace CountClickKey
 
                         // Week stats
                         DateTime dateTime = DateTime.Now;
-
                         data.DataCountClicked.DataWeekClicked.DayOfWeek = (int)dateTime.DayOfWeek;
 
                         DateTime dateLastMonday;
-                        if (dateTime.DayOfWeek == DayOfWeek.Sunday)
-                            dateLastMonday = dateTime.AddDays(-((int)dateTime.DayOfWeek + 6));
+                        if(dateTime.DayOfWeek == DayOfWeek.Sunday)
+                            dateLastMonday = dateTime.AddDays(-((int)dateTime.DayOfWeek+6));
                         else
-                            dateLastMonday = dateTime.AddDays(-(int)dateTime.DayOfWeek + 1);
+                            dateLastMonday = dateTime.AddDays(-(int)dateTime.DayOfWeek+1);
 
                         dateLastMonday = dateLastMonday.AddHours(-dateTime.Hour);
                         dateLastMonday = dateLastMonday.AddMinutes(-dateTime.Minute);
@@ -132,17 +133,34 @@ namespace CountClickKey
                         var weekMonthUpdateFile = data.DataCountClicked.DataWeekClicked.LastMonthUpdate;
                         var weekYearUpdateFile = data.DataCountClicked.DataWeekClicked.LastYearUpdate;
 
-                        DateTime dateMondayUpdateFile = new DateTime(int.Parse(weekYearUpdateFile), int.Parse(weekMonthUpdateFile), int.Parse(weekDayUpdateFile));
+                        DateTime dateMondayFile = new DateTime(int.Parse(weekYearUpdateFile), int.Parse(weekMonthUpdateFile), int.Parse(weekDayUpdateFile));
 
-                        if (dateLastMonday.Date != dateMondayUpdateFile.Date)
-                        { 
-                            data.DataCountClicked.DataWeekClicked.LastYearUpdate = dateLastMonday.ToString("yyy");
-                            data.DataCountClicked.DataWeekClicked.LastMonthUpdate = dateLastMonday.ToString("MM");
-                            data.DataCountClicked.DataWeekClicked.LastDayUpdate = dateLastMonday.ToString("dd");
-                            data.DataCountClicked.DataWeekClicked.CountWeekClicked = 0;
+                        DateTime[] dateWeekLastMonday = { new DateTime(), new DateTime(), new DateTime(), new DateTime(), new DateTime(), new DateTime(), new DateTime() };
+                        const int DAY_IN_WEEK = 7;
+                        for (int i = 0; i < DAY_IN_WEEK; i++)
+                        {
+                            if (i != 0)
+                                dateLastMonday = dateLastMonday.AddDays(1);
+
+                            dateWeekLastMonday[i] = new DateTime(dateLastMonday.Year, dateLastMonday.Month, dateLastMonday.Day);
                         }
-                        else
-                            data.DataCountClicked.DataWeekClicked.CountWeekClicked = statsList.DataCountClicked.DataWeekClicked.CountWeekClicked;
+
+                        for (int i = 0; i < dateWeekLastMonday.Length; i++)
+                        {
+                            if(dateMondayFile != dateWeekLastMonday[i] && i == DAY_IN_WEEK-1)
+                            {
+                                data.DataCountClicked.DataWeekClicked.LastYearUpdate = dateLastMonday.ToString("yyy");
+                                data.DataCountClicked.DataWeekClicked.LastMonthUpdate = dateLastMonday.ToString("MM");
+                                data.DataCountClicked.DataWeekClicked.LastDayUpdate = dateLastMonday.ToString("dd");
+                                data.DataCountClicked.DataWeekClicked.CountWeekClicked = 0;
+                                break;
+                            }
+                            else if(dateMondayFile == dateWeekLastMonday[i])
+                            {
+                                data.DataCountClicked.DataWeekClicked.CountWeekClicked = statsList.DataCountClicked.DataWeekClicked.CountWeekClicked;
+                                break;
+                            }
+                        }
 
                         // Month stats
                         var valueMonthUpdateFile = data.DataCountClicked.DataMonthClicked.MonthNumber;
@@ -165,6 +183,8 @@ namespace CountClickKey
                         }
                         else
                             data.DataCountClicked.DataYearClicked.CountYearClicked = statsList.DataCountClicked.DataYearClicked.CountYearClicked;
+
+                        break;
                     }
                 }
             }

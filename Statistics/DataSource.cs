@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using System.Windows;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     /// <summary>
     /// This class serves as a data source for keylogger. It provides method to get what we want.
@@ -40,7 +39,7 @@ namespace CountClickKey
             foreach (Key key in Utils.GetEnumValues<Key>().Where(x => x != Key.None))
             {
                 // Is it pressed?
-                bool down = Keyboard.IsKeyDown(key);
+                bool down = System.Windows.Input.Keyboard.IsKeyDown(key);
 
                 // It's not pressed, but it was - we consider this key as released
                 if (!down && PressedKeys.Contains(key))
@@ -61,7 +60,7 @@ namespace CountClickKey
 
                             ValueClickedKeyboard++;
 
-                            if(ValueClickedKeyboard == VALUE_FOR_SAVE_KEYBOARD)
+                            if (ValueClickedKeyboard == VALUE_FOR_SAVE_KEYBOARD)
                             {
                                 DataFile dataFile = new DataFile();
                                 dataFile.UpdateFileData();

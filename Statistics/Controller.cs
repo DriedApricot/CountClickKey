@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     /// <summary>
     /// Controlls flow of the keylogger

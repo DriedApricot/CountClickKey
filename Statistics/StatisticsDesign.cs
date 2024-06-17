@@ -5,7 +5,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Input;
 
-namespace CountClickKey
+namespace CountClickKey.Statistics
 {
     public class DesignStatistics
     {
@@ -14,11 +14,11 @@ namespace CountClickKey
         public void CreateDesignStatistics()
         {
             const int MAX_ALL_KEY_STACKPANEL = 6;
-            const int MAX_ALL_KEY_IN_STACKPANEL_FIRST = 16; // 13
-            const int MAX_ALL_KEY_IN_STACKPANEL_SECOND_AND_THIRD = 17; // 14
-            const int MAX_ALL_KEY_IN_STACKPANEL_FOURTH = 13; // 14
-            const int MAX_ALL_KEY_IN_STACKPANEL_FIFTH = 12; // 11
-            const int MAX_ALL_KEY_IN_STACKPANEL_SIXTH = 7; // 4
+            const int MAX_ALL_KEY_IN_STACKPANEL_FIRST = 16;
+            const int MAX_ALL_KEY_IN_STACKPANEL_SECOND_AND_THIRD = 17;
+            const int MAX_ALL_KEY_IN_STACKPANEL_FOURTH = 13;
+            const int MAX_ALL_KEY_IN_STACKPANEL_FIFTH = 12;
+            const int MAX_ALL_KEY_IN_STACKPANEL_SIXTH = 7;
 
             const int MAX_WRITER_KEY_STACKPANEL = 5;
             const int MAX_WRITER_KEY_STACKPANEL_FIRST_AND_SECOND = 13;
@@ -420,13 +420,14 @@ namespace CountClickKey
             else if (selectPeriod == SettingApp.TYPE_YEAR_PERIOD)
                 textCountClickKey = CreateTextCountClickKey(key.DataCountClicked.DataYearClicked.CountYearClicked, styleTextCountClick, key.KeyID, key.TypeKeys);
 
-            TextBlock textClicked = new TextBlock
-            {
-                Text = "clicked",
-                Style = styleTextClickedKey
-            };
+            TextBlock textClicked = new TextBlock { Style = styleTextClickedKey };
 
-            if(key.KeyID == Key.Add || (key.KeyID == Key.Enter && key.TypeKeys == DataFile.TYPE_KEY_NUMERIC_KEYPAD))
+            if (CountClickKey.Properties.Settings.Default.DefaultLanguage.ToString() == "ru-RU")
+                textClicked.Text = "нажатий";
+            else if (CountClickKey.Properties.Settings.Default.DefaultLanguage.ToString() == "en-US")
+                textClicked.Text = "clicked";
+
+            if (key.KeyID == Key.Add || (key.KeyID == Key.Enter && key.TypeKeys == DataFile.TYPE_KEY_NUMERIC_KEYPAD))
             {
                 textClicked.Margin = new Thickness(0, 136, 0, 0);
             }
@@ -523,7 +524,9 @@ namespace CountClickKey
 
             pathGeom.Figures.Add(pathFigure);
 
-            GeometryDrawing aGeometryDrawing = new GeometryDrawing() { Geometry = pathGeom, Brush = System.Windows.Media.Brushes.Black };
+            GeometryDrawing aGeometryDrawing = new GeometryDrawing() { Geometry = pathGeom, Brush = Brushes.Black };
+            if(Properties.Settings.Default.DefaultTheme == "Light") aGeometryDrawing.Brush = Brushes.Black;
+            else if(Properties.Settings.Default.DefaultTheme == "Dark") aGeometryDrawing.Brush = (Brush)(new BrushConverter().ConvertFrom("#BBBBBB"));
 
             DrawingBrush drawingBrush = new DrawingBrush { Stretch = Stretch.None, Drawing = aGeometryDrawing };
 
